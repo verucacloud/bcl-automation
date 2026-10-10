@@ -70,32 +70,32 @@ $platforms = [
         'slug' => 'instagram',
         'description' =>
             'Hubungkan akun Instagram profesional untuk monitoring performa konten, engagement, reach, dan pertumbuhan akun.',
-        'status' => 'Available soon',
+        'status' => 'Ready for setup',
         'icon' => 'instagram',
-        'url' => '#instagram',
+        'url' => '../connectors/instagram/connect.php',
         'button' => 'Hubungkan Instagram',
         'gradient' =>
             'from-fuchsia-500 via-pink-500 to-orange-400',
         'background' => 'bg-pink-400/10',
         'border' => 'border-pink-400/20',
         'text' => 'text-pink-300',
-        'enabled' => false,
+        'enabled' => true,
     ],
     [
         'name' => 'TikTok',
         'slug' => 'tiktok',
         'description' =>
             'Hubungkan akun TikTok untuk membaca profil, perkembangan audiens, video, interaksi, dan pola performa konten.',
-        'status' => 'Available soon',
+        'status' => 'Ready for setup',
         'icon' => 'music-2',
-        'url' => '#tiktok',
+        'url' => '../connectors/tiktok/connect.php',
         'button' => 'Hubungkan TikTok',
         'gradient' =>
             'from-slate-100 via-cyan-300 to-pink-400',
         'background' => 'bg-cyan-400/10',
         'border' => 'border-cyan-400/20',
         'text' => 'text-cyan-300',
-        'enabled' => false,
+        'enabled' => true,
     ],
     [
         'name' => 'YouTube',

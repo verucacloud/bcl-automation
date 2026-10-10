@@ -47,7 +47,19 @@ $googleClientReady =
     !empty($localConfig['google_client_secret']) &&
     !empty($localConfig['google_redirect_uri']);
 
+$instagramReady =
+    !empty($localConfig['instagram_client_id']) &&
+    !empty($localConfig['instagram_client_secret']) &&
+    !empty($localConfig['instagram_redirect_uri']);
+
+$tiktokReady =
+    !empty($localConfig['tiktok_client_key']) &&
+    !empty($localConfig['tiktok_client_secret']) &&
+    !empty($localConfig['tiktok_redirect_uri']);
+
 $connectedYouTubeAccounts = 0;
+$connectedInstagramAccounts = 0;
+$connectedTikTokAccounts = 0;
 
 $tableCheck = $conn->query("SHOW TABLES LIKE 'social_accounts'");
 
@@ -63,6 +75,34 @@ if ($tableCheck instanceof mysqli_result && $tableCheck->num_rows > 0) {
         $youtubeCountRow = $youtubeCountResult->fetch_assoc();
         $connectedYouTubeAccounts = isset($youtubeCountRow['total'])
             ? (int) $youtubeCountRow['total']
+            : 0;
+    }
+
+    $igCountResult = $conn->query(
+        "SELECT COUNT(*) AS total
+         FROM social_accounts
+         WHERE platform = 'instagram'
+           AND status = 'connected'"
+    );
+
+    if ($igCountResult instanceof mysqli_result) {
+        $igRow = $igCountResult->fetch_assoc();
+        $connectedInstagramAccounts = isset($igRow['total'])
+            ? (int) $igRow['total']
+            : 0;
+    }
+
+    $ttCountResult = $conn->query(
+        "SELECT COUNT(*) AS total
+         FROM social_accounts
+         WHERE platform = 'tiktok'
+           AND status = 'connected'"
+    );
+
+    if ($ttCountResult instanceof mysqli_result) {
+        $ttRow = $ttCountResult->fetch_assoc();
+        $connectedTikTokAccounts = isset($ttRow['total'])
+            ? (int) $ttRow['total']
             : 0;
     }
 }
@@ -1374,6 +1414,30 @@ $growthPrefix = $growth > 0
                 </div>
 
                 <?php
+                $instagramConnectorStatus = 'Not configured';
+                $instagramConnectorDot = 'bg-rose-400';
+
+                if ($instagramReady && $connectedInstagramAccounts > 0) {
+                    $instagramConnectorStatus =
+                        $connectedInstagramAccounts . ' akun terhubung';
+                    $instagramConnectorDot = 'bg-emerald-400';
+                } elseif ($instagramReady) {
+                    $instagramConnectorStatus = 'OAuth ready';
+                    $instagramConnectorDot = 'bg-cyan-400';
+                }
+
+                $tiktokConnectorStatus = 'Not configured';
+                $tiktokConnectorDot = 'bg-rose-400';
+
+                if ($tiktokReady && $connectedTikTokAccounts > 0) {
+                    $tiktokConnectorStatus =
+                        $connectedTikTokAccounts . ' akun terhubung';
+                    $tiktokConnectorDot = 'bg-emerald-400';
+                } elseif ($tiktokReady) {
+                    $tiktokConnectorStatus = 'OAuth ready';
+                    $tiktokConnectorDot = 'bg-cyan-400';
+                }
+
                 $youtubeConnectorStatus = 'Not configured';
                 $youtubeConnectorDot = 'bg-rose-400';
 
@@ -1387,8 +1451,8 @@ $growthPrefix = $growth > 0
                 }
 
                 $connectors = [
-                    ['Meta API', 'Not configured', 'bg-slate-500'],
-                    ['TikTok API', 'Not configured', 'bg-slate-500'],
+                    ['Instagram API', $instagramConnectorStatus, $instagramConnectorDot],
+                    ['TikTok API', $tiktokConnectorStatus, $tiktokConnectorDot],
                     ['YouTube API', $youtubeConnectorStatus, $youtubeConnectorDot],
                 ];
                 ?>

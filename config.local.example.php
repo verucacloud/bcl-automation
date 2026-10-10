@@ -44,4 +44,28 @@ return [
 
     'google_redirect_uri' => 'http://localhost/bcl/connectors/youtube/callback.php',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Instagram / Meta Graph API
+    |--------------------------------------------------------------------------
+    */
+
+    'instagram_client_id' => 'YOUR_INSTAGRAM_APP_ID',
+
+    'instagram_client_secret' => 'YOUR_INSTAGRAM_APP_SECRET',
+
+    'instagram_redirect_uri' => 'http://localhost/bcl/connectors/instagram/callback.php',
+
+    /*
+    |--------------------------------------------------------------------------
+    | TikTok for Developers
+    |--------------------------------------------------------------------------
+    */
+
+    'tiktok_client_key' => 'YOUR_TIKTOK_CLIENT_KEY',
+
+    'tiktok_client_secret' => 'YOUR_TIKTOK_CLIENT_SECRET',
+
+    'tiktok_redirect_uri' => 'http://localhost/bcl/connectors/tiktok/callback.php',
+
 ];
