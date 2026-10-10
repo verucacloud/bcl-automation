@@ -1,0 +1,6 @@
+.git
+.github
+vendor
+controller-agent/node_modules
+config.local.php
+*.log
