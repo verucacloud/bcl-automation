@@ -8,6 +8,8 @@ if [ ! -f /var/www/html/config.local.php ]; then
 <?php
 return [
     'db_host' => getenv('DB_HOST') ?: 'localhost',
+    'db_port' => getenv('DB_PORT') ? (int)getenv('DB_PORT') : 3306,
+    'db_ssl'  => getenv('DB_SSL') === 'true' || getenv('DB_PORT') == '4000',
     'db_name' => getenv('DB_NAME') ?: '',
     'db_user' => getenv('DB_USER') ?: '',
     'db_password' => getenv('DB_PASSWORD') ?: '',

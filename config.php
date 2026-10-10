@@ -17,12 +17,19 @@ $host = (string)($config['db_host'] ?? 'localhost');
 $user = (string)($config['db_user'] ?? '');
 $password = (string)($config['db_password'] ?? '');
 $database = (string)($config['db_name'] ?? '');
+$port = (int)($config['db_port'] ?? 3306);
+$useSsl = !empty($config['db_ssl']) || $port === 4000;
 
-$conn = new mysqli($host, $user, $password, $database);
-if ($conn->connect_error) {
+$conn = mysqli_init();
+if ($useSsl) {
+    $conn->ssl_set(NULL, NULL, NULL, NULL, NULL);
+}
+
+$connected = @$conn->real_connect($host, $user, $password, $database, $port, null, $useSsl ? MYSQLI_CLIENT_SSL : 0);
+if (!$connected || $conn->connect_error) {
     error_log('Database connection failed: ' . $conn->connect_error);
     http_response_code(500);
-    exit('Database connection failed.');
+    exit('Database connection failed: ' . htmlspecialchars($conn->connect_error));
 }
 $conn->set_charset('utf8mb4');
 
