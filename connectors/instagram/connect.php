@@ -27,7 +27,10 @@ if ($clientSecret === '') {
     );
 }
 
-if ($redirectUri === '') {
+if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    $currentHost = $_SERVER['HTTP_X_FORWARDED_HOST'];
+    $redirectUri = 'https://' . $currentHost . '/bcl/connectors/instagram/callback.php';
+} elseif (empty($redirectUri)) {
     instagramErrorPage(
         'Konfigurasi Belum Lengkap',
         'Instagram Redirect URI belum diisi pada config.local.php.',

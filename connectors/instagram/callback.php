@@ -40,6 +40,9 @@ $code = preg_replace('/#_$/', '', $code);
 $clientId = instagramConfigValue('instagram_client_id');
 $clientSecret = instagramConfigValue('instagram_client_secret');
 $redirectUri = instagramConfigValue('instagram_redirect_uri');
+if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    $redirectUri = 'https://' . $_SERVER['HTTP_X_FORWARDED_HOST'] . '/bcl/connectors/instagram/callback.php';
+}
 
 // 1. Tukar authorization code dengan short-lived token
 try {
