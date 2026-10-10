@@ -94,17 +94,17 @@ function clampScore(mixed $value): float
 /**
  * Format angka menjadi 1.2K, 2.5M, dan seterusnya.
  */
-function compactNumber(mixed $value): string
+function compactNumber($value): string
 {
     $number = is_numeric($value)
         ? (float) $value
         : 0.0;
 
-    if ($number >= 1_000_000_000) {
+    if ($number >= 1000000000) {
         return rtrim(
             rtrim(
                 number_format(
-                    $number / 1_000_000_000,
+                    $number / 1000000000,
                     1,
                     '.',
                     ''
@@ -115,11 +115,11 @@ function compactNumber(mixed $value): string
         ) . 'B';
     }
 
-    if ($number >= 1_000_000) {
+    if ($number >= 1000000) {
         return rtrim(
             rtrim(
                 number_format(
-                    $number / 1_000_000,
+                    $number / 1000000,
                     1,
                     '.',
                     ''
@@ -130,11 +130,11 @@ function compactNumber(mixed $value): string
         ) . 'M';
     }
 
-    if ($number >= 1_000) {
+    if ($number >= 1000) {
         return rtrim(
             rtrim(
                 number_format(
-                    $number / 1_000,
+                    $number / 1000,
                     1,
                     '.',
                     ''
