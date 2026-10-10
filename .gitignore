@@ -1,0 +1,14 @@
+# Sensitive configuration files (passwords & API keys)
+config.local.php
+.env
+controller-agent/.env
+
+# Dependencies
+/vendor/
+node_modules/
+controller-agent/node_modules/
+
+# Logs and system files
+*.log
+Thumbs.db
+.DS_Store
