@@ -46,7 +46,12 @@ function tiktokHttpRequest($url, $method = 'GET', $headers = [], $body = null)
         CURLOPT_CUSTOMREQUEST => strtoupper($method),
         CURLOPT_HTTPHEADER => $headers,
         CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
     ];
+
+    if (defined('CURLOPT_DNS_SERVERS')) {
+        @curl_setopt($curl, CURLOPT_DNS_SERVERS, '8.8.8.8,1.1.1.1');
+    }
 
     if ($body !== null) {
         $curlOptions[CURLOPT_POSTFIELDS] = is_array($body) ? http_build_query($body) : $body;

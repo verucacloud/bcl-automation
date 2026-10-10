@@ -46,6 +46,7 @@ function instagramHttpRequest($url, $method = 'GET', $headers = [], $body = null
         CURLOPT_CUSTOMREQUEST => strtoupper($method),
         CURLOPT_HTTPHEADER => $headers,
         CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
     ];
 
     if ($body !== null) {
