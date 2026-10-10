@@ -36,14 +36,22 @@ try {
     $data = $response['json'] ?? [];
 
     if (!empty($data['username'])) {
-        $username = $data['username'];
+        $username = (string)$data['username'];
         $avatar = $data['profile_picture_url'] ?? null;
+        $mediaCount = (int)($data['media_count'] ?? 0);
 
-        $update = $conn->prepare("UPDATE social_accounts SET username = ?, display_name = ?, avatar_url = COALESCE(?, avatar_url), last_sync_at = NOW() WHERE id = ?");
+        $update = $conn->prepare("UPDATE social_accounts SET username = ?, display_name = ?, avatar_url = COALESCE(?, avatar_url), video_count = ?, last_sync_at = NOW() WHERE id = ?");
         $displayName = '@' . $username;
-        $update->bind_param('sssi', $username, $displayName, $avatar, $accountId);
+        $update->bind_param('sssii', $username, $displayName, $avatar, $mediaCount, $accountId);
         $update->execute();
         $update->close();
+
+        // Jika dipanggil dari browser langsung, redirect kembali ke halaman sebelumnya
+        if (!isset($_SERVER['HTTP_ACCEPT']) || str_contains($_SERVER['HTTP_ACCEPT'], 'text/html')) {
+            $referer = $_SERVER['HTTP_REFERER'] ?? '../../accounts/analytics.php';
+            header('Location: ' . $referer);
+            exit;
+        }
 
         echo json_encode(['success' => true, 'message' => 'Sinkronisasi berhasil', 'data' => $data]);
         exit;

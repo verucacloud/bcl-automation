@@ -328,10 +328,46 @@ $channelId = trim(
     )
 );
 
-$channelUrl = $channelId !== ''
-    ? 'https://www.youtube.com/channel/' .
-        rawurlencode($channelId)
-    : '#';
+$platformLabel = match($platform) {
+    'instagram' => 'Instagram',
+    'tiktok' => 'TikTok',
+    'youtube' => 'YouTube',
+    default => ucfirst($platform),
+};
+
+$channelUrl = match($platform) {
+    'instagram' => ($username !== '' ? 'https://www.instagram.com/' . ltrim(rawurlencode($username), '@') . '/' : 'https://www.instagram.com/'),
+    'tiktok' => ($username !== '' ? 'https://www.tiktok.com/@' . ltrim(rawurlencode($username), '@') : 'https://www.tiktok.com/'),
+    default => ($channelId !== '' ? 'https://www.youtube.com/channel/' . rawurlencode($channelId) : '#'),
+};
+
+$platformIcon = match($platform) {
+    'instagram' => 'instagram',
+    'tiktok' => 'video',
+    default => 'youtube',
+};
+
+$platformProfileButton = match($platform) {
+    'instagram' => 'Buka Instagram',
+    'tiktok' => 'Buka TikTok',
+    default => 'Buka Channel',
+};
+
+$metric1Label = match($platform) {
+    'youtube' => 'Subscribers',
+    default => 'Followers',
+};
+
+$metric2Label = match($platform) {
+    'instagram' => 'Posts',
+    default => 'Videos',
+};
+
+$syncUrl = match($platform) {
+    'instagram' => "../connectors/instagram/sync.php?id=" . (int)$accountId,
+    'tiktok' => "../connectors/tiktok/sync.php?id=" . (int)$accountId,
+    default => "../connectors/youtube/sync.php?id=" . (int)$accountId,
+};
 
 $initial = strtoupper(
     mb_substr(
@@ -661,15 +697,15 @@ unset(
                         class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
                     >
                         <i
-                            data-lucide="youtube"
+                            data-lucide="<?= e($platformIcon) ?>"
                             class="h-5 w-5"
                         ></i>
 
-                        Buka Channel
+                        <?= e($platformProfileButton) ?>
                     </a>
 
                     <a
-                        href="../connectors/youtube/sync.php?id=<?= (int) $accountId ?>"
+                        href="<?= e($syncUrl) ?>"
                         class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 font-bold text-white shadow-glow transition hover:-translate-y-0.5"
                     >
                         <i
@@ -695,7 +731,7 @@ unset(
                     <p
                         class="text-sm font-semibold text-slate-400"
                     >
-                        Subscribers
+                        <?= e($metric1Label) ?>
                     </p>
 
                     <span
@@ -735,7 +771,7 @@ unset(
                     <p
                         class="text-sm font-semibold text-slate-400"
                     >
-                        Total Video
+                        <?= e($metric2Label) ?>
                     </p>
 
                     <span

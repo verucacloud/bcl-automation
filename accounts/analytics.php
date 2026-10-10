@@ -234,15 +234,15 @@ $connectionRate = $totalAccounts > 0
                 <div>
                     <p class="text-xs font-bold uppercase tracking-[.2em] text-cyan-300">Intelligence overview</p>
                     <h1 class="mt-3 max-w-3xl font-display text-3xl font-extrabold sm:text-5xl">Pantau performa seluruh akun dari satu dashboard.</h1>
-                    <p class="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">Data diambil dari tabel <strong>social_accounts</strong> dan diperbarui melalui fitur sinkronisasi YouTube.</p>
+                    <p class="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">Data diambil dari tabel <strong>social_accounts</strong> dan diperbarui melalui fitur sinkronisasi akun (Instagram, TikTok, YouTube).</p>
                 </div>
 
                 <div class="flex flex-col gap-3 sm:flex-row">
                     <a href="index.php" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 font-bold transition hover:bg-white/10">
                         <i data-lucide="users" class="h-5 w-5"></i>
-                        Akun Terhubung
+                        Kelola Akun
                     </a>
-                    <a href="../connectors/youtube/connect.php" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 font-bold shadow-glow transition hover:-translate-y-0.5">
+                    <a href="index.php#platforms" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 font-bold shadow-glow transition hover:-translate-y-0.5">
                         <i data-lucide="plus" class="h-5 w-5"></i>
                         Tambah Akun
                     </a>
@@ -361,10 +361,34 @@ $connectionRate = $totalAccounts > 0
                         <?php
                         $status = strtolower((string) ($account['status'] ?? 'error'));
                         $isConnected = $status === 'connected';
-                        $displayName = (string) ($account['display_name'] ?? 'YouTube Channel');
+                        $platform = strtolower((string) ($account['platform'] ?? 'instagram'));
+                        $displayName = (string) ($account['display_name'] ?? 'Akun Sosial');
                         $username = (string) ($account['username'] ?? '');
                         $avatarUrl = trim((string) ($account['avatar_url'] ?? ''));
                         $initial = strtoupper(mb_substr($displayName, 0, 1, 'UTF-8'));
+
+                        $platformLabel = match($platform) {
+                            'instagram' => 'Instagram',
+                            'tiktok' => 'TikTok',
+                            'youtube' => 'YouTube',
+                            default => ucfirst($platform)
+                        };
+
+                        $metric1Label = match($platform) {
+                            'youtube' => 'Subscribers',
+                            default => 'Followers'
+                        };
+
+                        $metric2Label = match($platform) {
+                            'instagram' => 'Posts',
+                            default => 'Videos'
+                        };
+
+                        $syncUrl = match($platform) {
+                            'instagram' => "../connectors/instagram/sync.php?id=" . (int)$account['id'],
+                            'tiktok' => "../connectors/tiktok/sync.php?id=" . (int)$account['id'],
+                            default => "../connectors/youtube/sync.php?id=" . (int)$account['id'],
+                        };
                         ?>
                         <article class="glass card-hover rounded-[1.6rem] p-5 sm:p-6">
                             <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
@@ -380,17 +404,17 @@ $connectionRate = $totalAccounts > 0
                                             <h3 class="truncate font-display text-lg font-extrabold"><?= e($displayName) ?></h3>
                                             <span class="rounded-full border px-2.5 py-1 text-[11px] font-bold <?= $isConnected ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-rose-400/20 bg-rose-400/10 text-rose-300' ?>"><?= e($status) ?></span>
                                         </div>
-                                        <p class="mt-1 truncate text-sm text-slate-500">youtube<?= $username !== '' ? ' • ' . e($username) : '' ?></p>
+                                        <p class="mt-1 truncate text-sm text-slate-500"><?= e($platformLabel) ?><?= $username !== '' ? ' • @' . ltrim(e($username), '@') : '' ?></p>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-3 sm:min-w-[360px]">
                                     <div class="rounded-xl bg-white/[.04] px-3 py-3 text-center">
-                                        <p class="text-[10px] uppercase tracking-wider text-slate-500">Subscribers</p>
+                                        <p class="text-[10px] uppercase tracking-wider text-slate-500"><?= $metric1Label ?></p>
                                         <p class="mt-1 font-bold"><?= e(compactNumber($account['subscriber_count'] ?? 0)) ?></p>
                                     </div>
                                     <div class="rounded-xl bg-white/[.04] px-3 py-3 text-center">
-                                        <p class="text-[10px] uppercase tracking-wider text-slate-500">Videos</p>
+                                        <p class="text-[10px] uppercase tracking-wider text-slate-500"><?= $metric2Label ?></p>
                                         <p class="mt-1 font-bold"><?= e(compactNumber($account['video_count'] ?? 0)) ?></p>
                                     </div>
                                     <div class="rounded-xl bg-white/[.04] px-3 py-3 text-center">
@@ -404,7 +428,7 @@ $connectionRate = $totalAccounts > 0
                                         <i data-lucide="monitor" class="h-4 w-4"></i>
                                         Monitoring
                                     </a>
-                                    <a href="../connectors/youtube/sync.php?id=<?= (int) $account['id'] ?>" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/20">
+                                    <a href="<?= e($syncUrl) ?>" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-300 transition hover:bg-cyan-400/20">
                                         <i data-lucide="refresh-cw" class="h-4 w-4"></i>
                                         Sync
                                     </a>
